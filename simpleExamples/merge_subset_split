@@ -1,0 +1,83 @@
+##########################################
+# 데이타를 그룹으로 묶은 후 함수 호출 하기
+
+# summary 입렫데이타에 대한 통계 요약값, 평균,중간값등을 리턴한다.
+library(doBy)
+summary(iris)
+x<-c(1:100)
+summary(x)
+
+# quantitle 값을 순서대로 나열했을때, 0,25,50,70,100% 에 해당하는 값을 보여줌
+quantile(c(1:100))
+quantile(c(1:100),seq(0,1,by=0.1)) # 10% 단위 구간으로 보여줌
+quantile(c(0:100),seq(0,1,by=0.01)) # 1% 단위구간으로 보여줌
+
+# summaryBy
+# 컬럼값의 특정 조건에 따라 요약함
+# summaryBy(공식,데이타,FUN=함수)
+# 공식 요약
+# Y1+Y2+... ~ X1+X2+... : (Y1,Y2...) 순서쌍을(X1,X2,...)으로 모델링 한다.
+# Y ~ X1+X2  : Y를 X1,X2로 모델링. 선형 회귀에서 Y=a*X1+b*X2+c 
+# Y ~ X1-X2  : Y를 X1으로 모델링 하되 X2는 제외 한다. 특히 선형회귀에서 X1+X2-1 ~ Y는 Y=a*X1+b*X2 로 상수항을 제외하는 것이다.
+# Y ~ X1|X2  : Y를 X2로 그룹으로 묶은 후 Y~X1을 수행한다.
+# Y ~ X1:X2 : 
+# Y ~ X1*X2  : 
+
+summaryBy(Sepal.Width+Sepal.Length ~ Species,iris) # Width와 Length를 Species에 따라 살펴본다.
+head(summaryBy(Species ~ Sepal.Width+Sepal.Length ,iris)) # Species를 Width와 Length에 따라 살펴본다.
+
+s<-summaryBy( Species ~ Sepal.Width|Sepal.Length ,iris,FUN=c(sum))
+head(s)
+
+head(iris)
+
+##########################################
+# 데이타 정렬 함수
+
+# order는 값을 리턴하는 것이 아니라, 정렬한 index를 리턴한다.
+x<-c(5,1,2,9,3)
+order(x,decreasing=T)
+order(x,decreasing=F)
+# 정렬한 값을 볼려면
+x[order(x)]
+sort(x) # order가 정렬된 데이타의 index를 리턴한다면, sort는 정렬된 데이타 자체를 리턴한다.
+sort(x,decreasing=T)
+
+#doBy의orderBy
+head(orderBy(~Sepal.Length,iris)) # ~오른쪽에 있는 Sepal.Length에 따라서 정렬한다.
+head(orderBy(~Sepal.Length+Sepal.Width,iris)) # ~오른쪽에 있는 Sepal.Length와 Sepal.Width 순에 따라서 정렬한다.
+
+# cf 디폴트 order는 정렬할필드 지정이 안됨
+# doBY의 orderBy는 정렬할 필드 지정이 가능함
+
+##########################################
+# 표본 추출 함수
+
+# 내장 함수 sample, doby함수 sampleBy
+x<-c(5,1,2,9,3)
+sample(x,3) # 무작위로 3개 비복원 추출
+sample(1:10,5,replace=TRUE)
+
+#sampleBy
+# ~우측에 나열한 이름에 따라 데이타가 그룹으로 묶인다
+# 추출한 샘플 비율 (frac) 지정 가능 10%, 20% 와 같이. 10%의 경우 0.1 지정
+# systematic=FALSE 계통 추출을 사용할지를 결정
+
+sampleBy(~Species,frac=0.1,data=iris) # 각 species별로 10% 씩 추출
+sampleBy(~Species,frac=0.2,data=iris) # 각 species별로 10% 씩 추출
+
+##########################################
+# 데이타 분리 및 병합
+# split : 분할
+# merge : 합치기
+# subset : 부분 값 선택
+iris$Species
+split(iris,iris$Species) # Species에 따라 데이타를 분할 일종의 group by?
+subset(iris,Species=='virginica') # split는 전체를 출력하지만 이건 조건에 맞는 것만 출력. 일종의 where
+subset(iris,Species=='virginica',select="Sepal.Width") # select는 특정 필드만 출력
+#merge 이건 nrow,ncol과 차이가 모지?
+
+##########################################
+# 데이타 프레임의 접근
+# df$colname 같이 접근하지만, 코드를 간략하게 하기 위해서 앞단의 "df$" 등을 생략하는 방식
+# with,within,attach,detach
