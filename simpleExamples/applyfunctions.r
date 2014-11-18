@@ -7,6 +7,8 @@
 # tapply : 벡터 →(데이타를 그룹으로 묶은후)→
 # mapply
 # 일괄 연산이기 때문에, for loop를 도는것 보다 빠르다.!! 반드시 익혀놓도록 하자
+# apply 에 대한 설명은 https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/ 에 잘 나와 있음
+
 ##
 #apply 함수 테스트
 
@@ -69,3 +71,16 @@ x
 xf=as.data.frame(t(x))
 xf
 View(xf)
+
+###
+# tapply 
+# 그룹별로 함수를 적용할 수 있음
+# 그룹은 색인을 정의해서 그 단위별로 그룹핑 함
+index<-c(1:10%%2)
+tapply(1:10,index,sum) # tappy(1:10,c(1 0 1 0 1 0 1 0 1 0),sum)과 동일, 1,0 두개의 그룹이 있고, 첫번째 값은 1 로 분류,두번째 값은 2로
+# 분류한꼴
+
+###
+# mapply
+# sapply와 비슷하지만 함수에 여러개의 인자를 동시에 올릴 수 있다.
+mapply(sum,c(1:10),c(21,30),c(31,40)) # sum(1+21+31), sum(2+22+32),... sum(10+30+40) 과 
